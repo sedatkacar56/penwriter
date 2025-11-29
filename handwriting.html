@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Importance of Order in JavaScript</title>
+
+<style>
+body {
+  background: #eceadc;
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  height: 3000px;
+  overflow-y: auto;
+}
+#canvas {
+  border: 1px solid #444;
+  background: #fff;
+  cursor: pointer;
+  display: block;
+  margin-bottom: 50px;
+}
+</style>
+</head>
+
+<body>
+
+<h2>✍️ Importance of Order in JavaScript</h2>
+
+<canvas id="canvas" width="1100" height="2500"></canvas>
+
+<script>
+// ---------------------------------------------
+// TEXT + SETTINGS
+// ---------------------------------------------
+const TEXT = `🔍 Why Order Matters
+
+ The ternary operator stops at the FIRST true condition.
+
+Let’s assume a scale where:
+ - Below 120 → Beginner
+ - 120–150 → Intermediate
+ - Above 180 → Advanced
+	
+❌ WRONG - checks smallest first
+
+time >= 120 ? "Beginner" :
+time >= 150 ? "Intermediate" :
+time >= 180 ? "Advanced" : "Elite"
+
+This returns "Beginner" ❌ (because it hits 120 first)
+
+✅ CORRECT - checks largest first
+
+time >= 180 ? "Advanced" :
+time >= 150 ? "Intermediate" :
+time >= 120 ? "Beginner" : "Elite"
+
+Returns "Advanced" ✅
+
+📏 The Rule
+
+Ternary operators stop at the first true condition.
+Using >= → Check largest → smallest ⬇️
+Using <= → Check smallest → largest ⬆️
+
+#AlHafiz #AlMuin #AlAleem# JavaScript #ProgrammingLogic #TernaryOperator #CleanCode #WebDevelopment 
+#SoftwareEngineering #ConditionalLogic #CodingTips #Debugging #CodeQuality 
+#DataScience #ComputerScience #ArtAndScience #STEM #Developers #TechEducation #LearnToCode`;
+
+
+const FONT = "36px 'Comic Sans MS'";
+const LINE_HEIGHT = 55;
+
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+// Load pen image
+let penImg = new Image();
+penImg.src = "pen.jpg";
+
+// ---------------------------------------------
+// WRAP TEXT TO LINES
+// ---------------------------------------------
+function wrapText(text, maxWidth) {
+  ctx.font = FONT;
+
+  const paragraphs = text.split("\n");  // keep line breaks
+  const lines = [];
+
+  paragraphs.forEach(par => {
+    if (par.trim() === "") {
+      // empty line → push blank
+      lines.push("");
+      return;
+    }
+
+    const words = par.split(" ");
+    let line = "";
+
+    words.forEach(w => {
+      const test = line + w + " ";
+      if (ctx.measureText(test).width > maxWidth) {
+        lines.push(line);
+        line = w + " ";
+      } else {
+        line = test;
+      }
+    });
+
+    lines.push(line);
+  });
+
+  return lines;
+}
+
+
+// ---------------------------------------------
+// HANDWRITING ANIMATION
+// ---------------------------------------------
+async function startAnimation() {
+
+  // Wait for pen
+  while (!penImg.complete) {
+    await new Promise(r => setTimeout(r, 99));
+  }
+
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const lines = wrapText(TEXT, 900);
+
+  let drawnLines = [];
+  let yStart = 100;
+
+  // Loop each wrapped line
+  for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+
+    const currentLine = lines[lineIndex];
+    drawnLines.push("");  
+
+    // Typing each letter
+    for (let i = 0; i < currentLine.length; i++) {
+      drawnLines[lineIndex] += currentLine[i];
+
+      // Clear
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw all previous lines
+      ctx.fillStyle = "#000";
+      ctx.font = FONT;
+
+      for (let k = 0; k < drawnLines.length; k++) {
+        ctx.fillText(drawnLines[k], 100, yStart + k * LINE_HEIGHT);
+      }
+
+      // Position pen EXACTLY at end of current text
+      const textWidth = ctx.measureText(drawnLines[lineIndex]).width;
+
+      ctx.drawImage(
+        penImg,
+        100 + textWidth,
+        yStart + lineIndex * LINE_HEIGHT - 40,
+        60, 60
+      );
+
+      // Auto scroll page
+      window.scrollTo({
+        top: yStart + lineIndex * LINE_HEIGHT - 200,
+        behavior: "smooth"
+      });
+
+      await new Promise(r => setTimeout(r, 50)); // speed
+    }
+
+    drawnLines[lineIndex] += "";
+  }
+}
+
+// Click event
+canvas.addEventListener("click", startAnimation);
+</script>
+
+</body>
+</html>
