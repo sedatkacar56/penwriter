@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 \# ✍️ PenWriter – Handwriting Animation Generator  
 
 \*A lightweight browser tool that turns any text into a smooth handwritten animation with a moving pen.\*
@@ -60,3 +61,7 @@ Everything runs \*\*inside your browser\*\* using HTML5 Canvas.
 
 
 
+=======
+# penwriter
+Paste your text and let it write for you! Alhamdulillah!
+>>>>>>> 046b3e426a160b4f7c91534a32da9d48598d838b
